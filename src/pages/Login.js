@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 import { useAuth } from "../context/AuthContext";
 import img from "../images/InformAid_Transparent.png";
-import { toast } from "react-toastify"; // Import toast
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -31,15 +31,15 @@ const LoginPage = () => {
     setError("");
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/login", {
+      const response = await api.post("/api/login", {
         email,
         password,
       });
-      
+
       if (response.data.token) {
-      login(response.data.token);
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+        login(response.data.token);
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
         toast.success("Logged in successfully!");
         const redirectPath = sessionStorage.getItem('postLoginRedirect');
         console.log('Redirecting after login to:', redirectPath);
@@ -68,7 +68,7 @@ const LoginPage = () => {
     setError("");
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/forgot-password", { email });
+      await api.post("/api/forgot-password", { email });
       setStep("otp");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send OTP");
@@ -82,7 +82,7 @@ const LoginPage = () => {
     setError("");
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/verify-otp", {
+      await api.post("/api/verify-otp", {
         email,
         otp,
       });
@@ -102,7 +102,7 @@ const LoginPage = () => {
     setError("");
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/reset-password", {
+      await api.post("/api/reset-password", {
         email,
         newPassword,
       });
@@ -125,10 +125,10 @@ const LoginPage = () => {
             {step === "login"
               ? "Login"
               : step === "email"
-              ? "Reset Password"
-              : step === "otp"
-              ? "Verify OTP"
-              : "Set New Password"}
+                ? "Reset Password"
+                : step === "otp"
+                  ? "Verify OTP"
+                  : "Set New Password"}
           </h2>
 
           {error && (
@@ -259,7 +259,7 @@ const LoginPage = () => {
         />
       </div>
 
-      </section>
+    </section>
   );
 };
 

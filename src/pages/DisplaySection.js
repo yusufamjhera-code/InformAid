@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from '../api';
 import { FaSearch, FaArrowLeft } from 'react-icons/fa';
 
 const DisplaySection = () => {
@@ -23,13 +23,12 @@ const DisplaySection = () => {
   useEffect(() => {
     const fetchSchemes = async () => {
       try {
-        const response = await fetch(`/api/schemes/${id}`);
-        const data = await response.json();
-        if (Array.isArray(data)) {
-          setSchemes(data);
+        const response = await api.get(`/api/schemes/${id}`);
+        if (Array.isArray(response.data)) {
+          setSchemes(response.data);
         } else {
           setSchemes([]);
-          console.error('Unexpected response:', data);
+          console.error('Unexpected response:', response.data);
         }
       } catch (error) {
         console.error('Error fetching schemes:', error);
@@ -41,16 +40,16 @@ const DisplaySection = () => {
   }, [id]);
 
   const handleLearnMore = (schemeId) => {
-  const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-  if (token) {
-    navigate(`/detail-info/${schemeId}`);
-  } else {
+    if (token) {
+      navigate(`/detail-info/${schemeId}`);
+    } else {
       sessionStorage.setItem('postLoginRedirect', `/detail-info/${schemeId}`);
       sessionStorage.setItem('showLoginToast', 'true');
-    navigate('/login');
-  }
-};
+      navigate('/login');
+    }
+  };
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 dark:text-gray-100 py-16 px-6 flex flex-col items-center">

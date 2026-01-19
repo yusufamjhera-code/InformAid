@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 import SignupImg from "../images/Signup.png";
-import img from "../images/InformAid_Transparent.png"
+import img from "../images/InformAid_Transparent.png";
 import { toast } from "react-toastify";
 const SignupPage = () => {
   const [step, setStep] = useState(1);
@@ -38,7 +38,7 @@ const SignupPage = () => {
 
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/api/signup", {
+      await api.post("/api/signup", {
         name,
         email,
         password,
@@ -64,11 +64,11 @@ const SignupPage = () => {
     setError("");
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/api/signup/verify", {
+      await api.post("/api/signup/verify", {
         email: formData.email,
         otp,
       });
-toast.success("OTP verified successfully! Account activated.");
+      toast.success("OTP verified successfully! Account activated.");
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "OTP verification failed");

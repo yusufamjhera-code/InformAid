@@ -10,13 +10,28 @@ const jwt = require('jsonwebtoken');
 const app = express();
 
 // ================== MIDDLEWARE ==================
-app.use(cors());
+// CORS configuration for production
+const allowedOrigins = [
+  'http://localhost:3000',
+  process.env.FRONTEND_URL // Set this in Render environment variables
+].filter(Boolean);
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 app.use(express.json());
+
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 
 // ================== MONGODB CONNECTION ==================
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/informaid')
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // ================== SCHEMAS ==================
 // Scheme Schema
@@ -75,7 +90,7 @@ app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     console.log('Login attempt for email:', email);
-    
+
     // Validate input
     if (!email || !password) {
       console.log('Missing email or password');
@@ -85,7 +100,7 @@ app.post('/api/login', async (req, res) => {
     // Find user
     const user = await User.findOne({ email });
     console.log('User found:', user ? 'Yes' : 'No');
-    
+
     if (!user) {
       console.log('User not found');
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -100,7 +115,7 @@ app.post('/api/login', async (req, res) => {
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     console.log('Password valid:', isPasswordValid);
-    
+
     if (!isPasswordValid) {
       console.log('Invalid password');
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -234,7 +249,7 @@ app.get('/api/schemes/:id', async (req, res) => {
 app.get('/api/search', async (req, res) => {
   try {
     const { q, limit = 10 } = req.query;
-    
+
     if (!q || q.trim().length === 0) {
       return res.json([]);
     }
@@ -242,7 +257,7 @@ app.get('/api/search', async (req, res) => {
     // Use Trie if available, otherwise fallback to database search
     if (schemeTrie) {
       const schemeIds = schemeTrie.search(q.trim(), parseInt(limit));
-      const schemes = allSchemesCache.filter(s => 
+      const schemes = allSchemesCache.filter(s =>
         schemeIds.includes(s._id.toString())
       );
       res.json(schemes);
@@ -265,7 +280,7 @@ app.get('/api/search', async (req, res) => {
 app.get('/api/scheme/:id', async (req, res) => {
   try {
     console.log('Fetching scheme with ID:', req.params.id);
-    
+
     // Validate ID format
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       console.log('Invalid scheme ID format');
@@ -274,7 +289,7 @@ app.get('/api/scheme/:id', async (req, res) => {
 
     const scheme = await Scheme.findById(req.params.id);
     console.log('Found scheme:', scheme ? 'Yes' : 'No');
-    
+
     if (!scheme) {
       console.log('Scheme not found');
       return res.status(404).json({ message: 'Scheme not found' });
@@ -293,7 +308,7 @@ app.get('/api/scheme/:id/recommendations', async (req, res) => {
   try {
     const { id } = req.params;
     const { method = 'bfs', limit = 5 } = req.query;
-    
+
     // Validate ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: 'Invalid scheme ID format' });
@@ -302,11 +317,11 @@ app.get('/api/scheme/:id/recommendations', async (req, res) => {
     // Use Graph if available
     if (schemeGraph) {
       const recommendations = schemeGraph.getRecommendations(
-        id, 
-        parseInt(limit), 
+        id,
+        parseInt(limit),
         method
       );
-      
+
       // Extract just the schemes from recommendations
       const schemes = recommendations.map(rec => rec.scheme);
       return res.json(schemes);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Typography, Paper, List, ListItem, ListItemText, Divider, Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 const SchemeDetails = () => {
   const { id } = useParams();
@@ -13,7 +13,7 @@ const SchemeDetails = () => {
   useEffect(() => {
     const fetchSchemeDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/scheme/${id}`);
+        const response = await api.get(`/api/scheme/${id}`);
         setScheme(response.data);
         setError(null);
       } catch (err) {

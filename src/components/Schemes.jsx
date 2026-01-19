@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, List, Tabs, Tab } from '@mui/material';
-import axios from 'axios';
+import api from '../api';
 import { AnimatePresence } from 'framer-motion';
 import SchemeCard from './SchemeCard';
 
@@ -16,7 +16,7 @@ const Schemes = () => {
   useEffect(() => {
     const fetchSchemes = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/schemes');
+        const response = await api.get('/api/schemes');
         setSchemes(response.data);
         setError(null);
       } catch (err) {
