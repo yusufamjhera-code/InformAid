@@ -13,7 +13,9 @@ const app = express();
 // CORS configuration for production
 const allowedOrigins = [
   'http://localhost:3000',
-  process.env.FRONTEND_URL // Set this in Render environment variables
+  'https://informaid-portal.web.app',
+  'https://informaid-portal.firebaseapp.com',
+  process.env.FRONTEND_URL
 ].filter(Boolean);
 
 app.use(cors({
