@@ -4,6 +4,7 @@ import { Search, Eye, Ear, Brain, Activity } from "lucide-react";
 import img from '../images/InformAid_Transparent.png';
 import { motion, useAnimation } from 'framer-motion';
 import Trie from '../utils/Trie';
+import api from '../api';
 
 const categoryToId = {
   "Visual Disabled": 1,
@@ -44,10 +45,9 @@ const SearchSection = () => {
       try {
         let allSchemes = [];
         for (let id = 1; id <= 4; id++) {
-          const res = await fetch(`/api/schemes/${id}`);
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            allSchemes = allSchemes.concat(data);
+          const res = await api.get(`/api/schemes/${id}`);
+          if (Array.isArray(res.data)) {
+            allSchemes = allSchemes.concat(res.data);
           }
         }
         setSchemes(allSchemes);
@@ -78,7 +78,7 @@ const SearchSection = () => {
   const handleSearch = () => {
     const trimmed = searchTerm.trim();
     if (!trimmed) return;
-    
+
     // Use Trie for fast search
     const results = trieRef.current.search(trimmed, 1);
     if (results.length > 0) {
@@ -104,7 +104,7 @@ const SearchSection = () => {
     setLoadingCategory(true);
     setTimeout(() => {
       setLoadingCategory(false);
-    navigate(`/schemes/${categoryToId[category]}`);
+      navigate(`/schemes/${categoryToId[category]}`);
     }, 1000);
   };
 
