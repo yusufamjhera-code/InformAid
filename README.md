@@ -133,17 +133,6 @@ The application is deployed using free-tier services:
 
 > ⚠️ **Note**: The Render free tier may have a ~30 second cold start delay after periods of inactivity.
 
----
-
-## 📸 Screenshots
-
-| Homepage | Scheme Categories |
-|----------|-------------------|
-| ![Homepage](https://via.placeholder.com/400x250?text=Homepage) | ![Categories](https://via.placeholder.com/400x250?text=Categories) |
-
-| Scheme Details | Search |
-|----------------|--------|
-| ![Details](https://via.placeholder.com/400x250?text=Scheme+Details) | ![Search](https://via.placeholder.com/400x250?text=Search) |
 
 ---
 
@@ -157,11 +146,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -177,7 +161,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Government of India for scheme data
 - All contributors and testers
-- MCA Mini Project 2024-25
 
 ---
 
